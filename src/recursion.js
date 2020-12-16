@@ -7,31 +7,99 @@
 // Example: 5! = 5 x 4 x 3 x 2 x 1 = 120
 // factorial(5); // 120
 var factorial = function(n) {
+    if (n < 0) {
+        return null;
+    }
+    if (n === 0) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
 };
 
 // 2. Compute the sum of an array of integers.
 // sum([1,2,3,4,5,6]); // 21
 var sum = function(array) {
+    if (array.length === 0) {
+        return 0;
+    } else {
+        return array[0] + sum(array.slice(1));
+    }
 };
 
-// 3. Sum all numbers in an array containing nested arrays.
+// *3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
 var arraySum = function(array) {
+    var sum = 0;
+    if (typeof array === "number") {
+        sum += array;
+    } else {
+        for (var i = 0; i < array.length; i++) {
+            sum += arraySum(array[i]);
+        }
+    }
+    return sum;
 };
 
 // 4. Check if a number is even.
 var isEven = function(n) {
+    
+    //if n == 0
+    if (n === 0) return true;
+    //return true
+    //if n === 1 || -1 
+    else if (n === 1 || n === -1) {
+        return false;
+    }
+    // return isEven(n+2);
+    //else
+    else if (n < 0) {
+        return isEven(n + 2);
+    }
+    else {
+        return isEven(n - 2);
+    }
+    // return isEven(n-2);
 };
 
 // 5. Sum all integers below a given integer.
 // sumBelow(10); // 45
 // sumBelow(7); // 21
 var sumBelow = function(n) {
+    if (n === 0) {
+        return 0;
+    } else if (n < 0) {
+        var sum = n + 1;
+        sum += sumBelow(n+1);
+    } else {
+        var sum = n - 1
+        sum += sumBelow(n-1);
+    }
+    return sum;
 };
-
+/*
+sumBelow(2)
+    sum0 += sumBelow(1)
+    sum1 += sumBelow(0)
+    n == 0 return 0
+    sum1 += 0
+    sum0 += 1
+*/
 // 6. Get the integers within a range (x, y).
 // range(2,9); // [3,4,5,6,7,8]
 var range = function(x, y) {
+    if (x === y || x + 1 === y || x - 1 === y) {
+        return [];
+    } else if (x < y) {
+        var result = [x+1];
+        result.push.apply(result, range(x+1, y));
+    } else {
+        var result = [x-1];
+        result.push.apply(result, range(x-1, y))
+    }
+
+
+    return result;
 };
 
 // 7. Compute the exponent of a number.
@@ -124,14 +192,14 @@ var countOccurrence = function(array, value) {
 var rMap = function(array, callback) {
 };
 
-// 22. Write a function that counts the number of times a key occurs in an object.
+// *22. Write a function that counts the number of times a key occurs in an object.
 // var obj = {'e':{'x':'y'},'t':{'r':{'e':'r'},'p':{'y':'r'}},'y':'e'};
 // countKeysInObj(obj, 'r') // 1
 // countKeysInObj(obj, 'e') // 2
 var countKeysInObj = function(obj, key) {
 };
 
-// 23. Write a function that counts the number of times a value occurs in an object.
+// *23. Write a function that counts the number of times a value occurs in an object.
 // var obj = {'e':{'x':'y'},'t':{'r':{'e':'r'},'p':{'y':'r'}},'y':'e'};
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
