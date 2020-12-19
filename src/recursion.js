@@ -170,16 +170,28 @@ var modulo = function(x, y) {
     } else if (x === 0) {
         return 0;
     };
-    if (y < 0) {
+    if (x < 0 && y < 0) {
+        if (x - y > 0) {
+            return x;
+        };
+        return modulo(x - y, y);
+    }
+    if (x < 0) {
         if (x + y > 0) {
             return x;
-        }
+        };
+        return modulo(x + y, y);
+    };
+    if (y < 0) {
+        if (x + y < 0) {
+            return x;
+        };
         return modulo(x+y, y);
     };
     if (x - y < 0) {
         return x;
-    }; 
-    return modulo(x-y, y); 
+    };
+    return modulo(x-y, y);
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
@@ -189,10 +201,19 @@ var multiply = function(x, y) {
     if (y === 0) {
         return 0;
     } else {
-        if (x < 0) {
-        }
-        sum += x
-        sum += multiply(x, y-1);
+        if (x < 0 && y < 0) {
+            sum -= x;
+            sum += multiply(x, y+1);
+        } else if (x < 0) {
+            sum += x;
+            sum += multiply(x,y-1);
+        } else if (y < 0) {
+            sum -= x;
+            sum += multiply(x, y+1);
+        }else {
+            sum += x;
+            sum += multiply(x, y-1);
+        };
     };
     return sum;
 
@@ -201,6 +222,40 @@ var multiply = function(x, y) {
 // 13. Write a function that divides two numbers without using the / operator or
 // Math methods to arrive at an approximate quotient (ignore decimal endings).
 var divide = function(x, y) {
+    let quotient = 0;
+    if (x === 0 && y === 0) {
+        return NaN;
+    } else if (x === 0) {
+        return 0;
+    } else {
+        if (x < 0 && y < 0) {
+            if (x - y > 0) {
+                return quotient;
+            };
+            quotient += 1;
+            quotient += divide(x - y, y);
+        } else if (x < 0) {
+            if (x - y > 0) {
+                return quotient;
+            }
+            quotient -= 1;
+            quotient += divide(x + y, y);
+        } else if (y < 0) {
+            if (x - y > 0) {
+                return quotient;
+            }
+            quotient -= 1;
+            quotient += divide(x + y, y);
+        } else {
+            if (x - y < 0) {
+                return quotient;
+            }
+            quotient += 1;
+            quotient += divide(x - y, y);
+        };
+    };
+    if (quotient === -1) return 0;
+    return quotient;
 };
 
 // 14. Find the greatest common divisor (gcd) of two positive numbers. The GCD of two
@@ -209,6 +264,17 @@ var divide = function(x, y) {
 // http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
 // https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 var gcd = function(x, y) {
+    if (x < 0 || y < 0) {
+        return null;
+    };
+    if (x === 0) {
+        return y;
+    } else if (y === 0) {
+        return x;
+    };
+    let remainder = modulo(x, y);
+    return gcd(y, remainder);
+    
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
@@ -216,21 +282,52 @@ var gcd = function(x, y) {
 // compareStr('house', 'houses') // false
 // compareStr('tomato', 'tomato') // true
 var compareStr = function(str1, str2) {
+    if (str1.length === 0 && str2.length === 0) {
+        return true;
+    } else if (str1[0] === str2[0]) {
+        return compareStr(str1.slice(1), str2.slice(1));
+    } else {
+        return false;
+    } 
 };
 
 // 16. Write a function that accepts a string and creates an array where each letter
 // occupies an index of the array.
 var createArray = function(str) {
+    let result = [];
+    if (str.length === 0) {
+        return result;
+    } else {
+        result.push(str[0]);
+        result.push.apply(result ,createArray(str.slice(1)));
+    }
+    return result;
 };
 
 // 17. Reverse the order of an array
 var reverseArr = function(array) {
+    let result = [];
+    if (array.length === 0) {
+        return result;
+    } else {
+        result.push(array.pop());
+        result.push.apply(result, reverseArr(array.splice(0)));
+    }
+    return result;
 };
 
 // 18. Create a new array with a given value and length.
 // buildList(0,5) // [0,0,0,0,0]
 // buildList(7,3) // [7,7,7]
 var buildList = function(value, length) {
+    let result = [];
+    if (length === 0) {
+        return result;
+    } else {
+        result.push(value);
+        result.push.apply(result, buildList(value, length -1));
+    };
+    return result;
 };
 
 // 19. Implement FizzBuzz. Given integer n, return an array of the string representations of 1 to n.
@@ -239,17 +336,52 @@ var buildList = function(value, length) {
 // For numbers which are multiples of both three and five, output “FizzBuzz” instead of the number.
 // fizzBuzz(5) // ['1','2','Fizz','4','Buzz']
 var fizzBuzz = function(n) {
+    let result = [];
+    if (n === 0) {
+        return result;
+    } else if (n % 3 === 0 && n % 5 === 0) {
+        result.unshift("FizzBuzz");
+        result.unshift.apply(result, fizzBuzz(n-1));
+    } else if (n % 5 === 0) {
+        result.unshift("Buzz");
+        result.unshift.apply(result, fizzBuzz(n-1));
+    } else if (n % 3 === 0) {
+        result.unshift("Fizz");
+        result.unshift.apply(result, fizzBuzz(n-1));
+    } else {
+        result.unshift(n.toString());
+        result.unshift.apply(result, fizzBuzz(n-1));
+    }
+    return result;
 };
 
 // 20. Count the occurence of a value in a list.
 // countOccurrence([2,7,4,4,1,4], 4) // 3
 // countOccurrence([2,'banana',4,4,1,'banana'], 'banana') // 2
 var countOccurrence = function(array, value) {
+    let count = 0;
+    if (array.length === 0) {
+        return 0;
+    } else if (array[0] === value) {
+        count += 1;
+        count += countOccurrence(array.splice(1), value);
+    } else {
+        count += countOccurrence(array.splice(1), value);
+    }
+    return count;
 };
 
 // 21. Write a recursive version of map.
 // rMap([1,2,3], timesTwo); // [2,4,6]
 var rMap = function(array, callback) {
+    let result = [];
+    if (array.length === 0) {
+        return result;
+    } else {
+        result.push(callback(array[0]));
+        result.push.apply(result, rMap(array.slice(1), callback));
+    }
+    return result;
 };
 
 // *22. Write a function that counts the number of times a key occurs in an object.
